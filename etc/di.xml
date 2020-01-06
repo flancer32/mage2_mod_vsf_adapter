@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- ******* -->
+    <!-- PLUGINS -->
+    <!-- ******* -->
+    <type name="Magento\Store\Model\StoreRepository">
+        <!-- Replace 'rest' with 'ru' to process REST requests from VSF API. -->
+        <plugin name="fl32_vsf_adapter_plugin"
+                type="Flancer32\VsfAdapter\Plugin\Magento\Store\Model\StoreRepository"
+                sortOrder="1000" disabled="false"/>
+    </type>
+
+</config>
