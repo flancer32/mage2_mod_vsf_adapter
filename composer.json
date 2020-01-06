@@ -1,0 +1,21 @@
+{
+  "name": "flancer32/mage2_mod_vsf_adapter",
+  "description": "Magento 2 module to use Magento apps with VueStorefront",
+  "type": "magento2-module",
+  "homepage": "https://github.com/flancer32/mage2_mod_vsf_adapter",
+  "license": "GPL-3.0-only",
+  "authors": [
+    {
+      "name": "Alex Gusev", "email": "alex@flancer64.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Flancer32\\VsfAdapter\\": ""
+    }
+  }
+}
