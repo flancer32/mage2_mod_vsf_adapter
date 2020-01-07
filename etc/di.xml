@@ -4,8 +4,14 @@
     <!-- ******* -->
     <!-- PLUGINS -->
     <!-- ******* -->
+    <type name="Magento\Eav\Model\AttributeRepository">
+        <!-- Add filter to skip Temando Shipping attributes (started with "ts_"). -->
+        <plugin name="fl32_vsf_adapter_plugin"
+                type="Flancer32\VsfAdapter\Plugin\Magento\Eav\Model\AttributeRepository"
+                sortOrder="1000" disabled="false"/>
+    </type>
     <type name="Magento\Store\Model\StoreRepository">
-        <!-- Replace 'rest' with 'ru' to process REST requests from VSF API. -->
+        <!-- Replace 'rest' with 'default' to process REST requests from VSF API. -->
         <plugin name="fl32_vsf_adapter_plugin"
                 type="Flancer32\VsfAdapter\Plugin\Magento\Store\Model\StoreRepository"
                 sortOrder="1000" disabled="false"/>

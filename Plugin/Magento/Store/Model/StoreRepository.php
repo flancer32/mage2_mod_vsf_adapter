@@ -9,7 +9,7 @@ namespace Flancer32\VsfAdapter\Plugin\Magento\Store\Model;
 class StoreRepository
 {
     /**
-     * Replace 'rest' with 'ru' to process REST requests from VSF API.
+     * Replace 'rest' with 'default' to process REST requests from VSF API.
      *
      * @param \Magento\Store\Model\StoreRepository $subject
      * @param $code
@@ -20,7 +20,7 @@ class StoreRepository
         $code
     ) {
         if ($code == 'rest') {
-            $code = 'ru';
+            $code = 'default';
         }
         return [$code];
     }
