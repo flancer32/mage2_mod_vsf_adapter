@@ -11,8 +11,12 @@ namespace Flancer32\VsfAdapter\Repo\ElasticSearch\Data;
  */
 class Category
 {
-    /** @var int */
+    /** @var string Comma-separated list of first line children. */
+    public $children;
+    /** @var int Total count of all children in all subcategories to the full depth. */
     public $children_count;
+    /** @var Category[] Hierarchy of all subcategories. */
+    public $children_data;
     /** @var int */
     public $id;
     /** @var bool */

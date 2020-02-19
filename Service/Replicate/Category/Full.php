@@ -18,6 +18,8 @@ class Full
 {
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter */
     private $adapterEs;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category\Full\A\Indexer */
+    private $anIndexer;
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Category */
     private $daoCat;
     /** @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory */
@@ -35,7 +37,8 @@ class Full
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $factCategoryCollection,
         \Magento\Catalog\Helper\Category $hlpCatalogCategory,
         \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter $adapterEs,
-        \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Category $daoCat
+        \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Category $daoCat,
+        \Flancer32\VsfAdapter\Service\Replicate\Category\Full\A\Indexer $anIndexer
     ) {
         $this->logger = $logger;
         $this->mgrStore = $mgrStore;
@@ -43,10 +46,11 @@ class Full
         $this->hlpCatalogCategory = $hlpCatalogCategory;
         $this->adapterEs = $adapterEs;
         $this->daoCat = $daoCat;
+        $this->anIndexer = $anIndexer;
     }
 
     /**
-     * Convert category data from Magento format to ElasticSearch format.
+     * Convert category data from Magento format to ElasticSearch format (w/o hierarchical data in `children_data`).
      *
      * @param \Magento\Catalog\Model\Category[] $mageCats
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Category[]
@@ -54,6 +58,7 @@ class Full
     private function convertMageToEs($mageCats)
     {
         $result = [];
+        $ndxByLevel = [];
         foreach ($mageCats as $one) {
             // prepare intermediate data
             $id = $one->getId();
@@ -62,7 +67,9 @@ class Full
             $urlPath = $one->getUrlPath() . "/$urlKey";
             // prepare target data object
             $esItem = new ECategory();
-            $esItem->children_count = (int)$one->getChildrenCount();
+            $esItem->children = [];
+            $esItem->children_count = 0;
+            $esItem->children_data = [];
             $esItem->id = (int)$one->getId();
             $esItem->is_active = (bool)$one->getIsActive();
             $esItem->level = (int)$one->getLevel();
@@ -103,6 +110,7 @@ class Full
         $this->mgrStore->setCurrentStore($storeId);
         $mageCats = $this->getMageCategories($storeId);
         $esCats = $this->convertMageToEs($mageCats);
+        $esCats = $this->anIndexer->exec($esCats);
         $total = count($esCats);
         $this->logger->info("Total '$total' categories is found to be replicated.");
         $this->deleteEsData();
