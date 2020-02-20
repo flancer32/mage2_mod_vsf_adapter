@@ -63,7 +63,7 @@ abstract class Dao
 
     private function getIndexName()
     {
-        return $this->adapter->getIndexPrefix() . '_' . $this->getEntityName();
+        return $this->adapter->getIndexPrefix() . $this->getEntityName();
     }
 
     public function getPrimaryKey()

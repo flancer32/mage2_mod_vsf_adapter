@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <!-- **************************************************** -->
+    <!-- Configuration of the component's data provider.      -->
+    <!-- **************************************************** -->
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">fl32vsf_catalog_replicate_form.fl32vsf_catalog_replicate_form_ds
+            </item>
+        </item>
+    </argument>
+
+    <settings>
+        <buttons>
+            <button name="save" class="Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate\Button\Start"/>
+        </buttons>
+        <deps>
+            <dep>fl32vsf_catalog_replicate_form.fl32vsf_catalog_replicate_form_ds</dep>
+        </deps>
+        <!-- to prevent never ending spinner & to post form data to server -->
+        <layout>
+            <type>tabs</type>
+        </layout>
+    </settings>
+
+    <dataSource name="fl32vsf_catalog_replicate_form_ds"
+                component="Magento_Ui/js/form/provider">
+        <settings>
+            <submitUrl path="fl32vsf/catalog_replicate/post"/>
+        </settings>
+        <dataProvider class="Flancer32\VsfAdapter\Ui\DataProvider\Catalog\Replicate\Form"
+                      name="fl32vsf_catalog_replicate_form_ds">
+        </dataProvider>
+    </dataSource>
+
+    <!-- See \Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate\Report::FIELDSET -->
+    <fieldset name="catalog_replicate_form">
+        <!-- Don't remove "settings/label" section, fieldset will be empty on the front -->
+        <settings>
+            <label></label>
+        </settings>
+        <field name="store_view" formElement="select">
+            <settings>
+                <label>Store View</label>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Flancer32\VsfAdapter\Model\Config\Source\StoreViews"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+        <text template="ui/form/element/text">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="inputName" xsi:type="string">notes</item>
+                    <item name="value" xsi:type="string">
+                        <![CDATA[Select view to replicate catalog data to related Elasticsearch index (see "Stores / Configuration / VUE STOREFRONT / Config / Elasticsearch").]]>
+                    </item>
+                </item>
+            </argument>
+        </text>
+    </fieldset>
+</form>

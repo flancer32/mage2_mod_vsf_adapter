@@ -15,11 +15,19 @@ class Logger
     const FILENAME = 'vsf.log';
     const NAME = 'VSF';
 
+    /** @var \Monolog\Handler\StreamHandler */
+    private $hndlInMemory;
+
     public function __construct()
     {
         $handlers = $this->initHandlers();
         $processors = [];
         parent::__construct(static::NAME, $handlers, $processors);
+    }
+
+    public function getHandlerMemory(): \Monolog\Handler\StreamHandler
+    {
+        return $this->hndlInMemory;
     }
 
     private function initFormatter()
@@ -40,6 +48,12 @@ class Logger
         $handler = new \Monolog\Handler\StreamHandler($path);
         $handler->setFormatter($formatter);
         $result[] = $handler;
+
+        /* add memory handler */
+        $path = 'php://memory';
+        $this->hndlInMemory = new \Monolog\Handler\StreamHandler($path);
+        $this->hndlInMemory->setFormatter($formatter);
+        $result[] = $this->hndlInMemory;
 
         return $result;
     }

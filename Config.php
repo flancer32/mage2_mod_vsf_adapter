@@ -10,6 +10,11 @@ namespace Flancer32\VsfAdapter;
 
 class Config
 {
+    /**
+     * Adminhtml menu items.
+     */
+    const MENU_CATALOG_REPLICATE = self::MODULE . '::catalog_replicate';
+
     /** This module name. */
     const MODULE = 'Flancer32_VsfAdapter';
 }

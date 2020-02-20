@@ -95,27 +95,45 @@ class Full
     }
 
     /**
-     * @param ARequest $request
-     * @return AResponse
+     * Perform replication for all catalog categories.
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Category\Full\Request|null $request
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Category\Full\Response
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(ARequest $request = null)
     {
         $result = new AResponse();
+        $this->logger->info("Full replication for categories is started.");
         $indexPrefix = $request->indexPrefix;
         $storeId = $request->storeId;
-        $this->logger->info("Full replication for categories is started (index: '$indexPrefix...'; store: $storeId).");
+
+        /* set current store according to request */
+        $storeIdCurrent = $this->mgrStore->getStore()->getId();
+        $this->mgrStore->setCurrentStore($storeId);
+
+        /* rebuild Elasticsearch client according to given store view */
+        $this->adapterEs->rebuildClient();
         if ($indexPrefix) {
+            /* reset index prefix if requested */
             $this->adapterEs->setIndexPrefix($indexPrefix);
         }
-        $this->mgrStore->setCurrentStore($storeId);
+        $indexPrefix = $this->adapterEs->getIndexPrefix();
+        $this->logger->info("Full replication for categories is started (index: '$indexPrefix...'; store: $storeId).");
+
+        /* get Magento data, convert it to ES form then index data  */
         $mageCats = $this->getMageCategories($storeId);
         $esCats = $this->convertMageToEs($mageCats);
         $esCats = $this->anIndexer->exec($esCats);
         $total = count($esCats);
         $this->logger->info("Total '$total' categories is found to be replicated.");
+
+        /* remove all indexes from ES then create new ones */
         $this->deleteEsData();
         $this->saveEsData($esCats);
         $this->logger->info("Full replication for categories is completed.");
+
+        /* restore current store */
+        $this->mgrStore->setCurrentStore($storeIdCurrent);
         return $result;
     }
 

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<config
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="vsf" translate="label" sortOrder="256">
+            <label>Vue Storefront</label>
+        </tab>
+        <section id="vsf_config" translate="label"
+                 sortOrder="1024" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Config</label>
+            <tab>vsf</tab>
+            <resource>Flancer32_VsfAdapter::config</resource>
+            <group id="es" translate="label"
+                   sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Elasticsearch</label>
+                <field id="scheme" translate="label comment" type="select"
+                       sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Scheme</label>
+                    <comment>Scheme to use to connect to Elasticsearch server.</comment>
+                    <source_model>Flancer32\VsfAdapter\Model\Config\Source\HttpScheme</source_model>
+                </field>
+                <field id="host" translate="label comment" type="text"
+                       sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Host</label>
+                    <comment>Domain name or IP address for Elasticsearch server.</comment>
+                </field>
+                <field id="port" translate="label comment" type="text"
+                       sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Port</label>
+                    <comment>Port to connect to Elasticsearch server.</comment>
+                </field>
+                <field id="index_prefix" translate="label comment" type="text"
+                       sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Index Prefix</label>
+                    <comment>Prefix for Elasticsearch indexes (vsf_ => vsf_category, vsf_product, ...).</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
