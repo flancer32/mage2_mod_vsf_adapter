@@ -6,13 +6,13 @@
 
 namespace Flancer32\VsfAdapter\Cli\Replicate;
 
-use Flancer32\VsfAdapter\Service\Replicate\Category\Request as ARequest;
+use Flancer32\VsfAdapter\Service\Replicate\Product\Request as ARequest;
 
-class Category
+class Product
     extends \Symfony\Component\Console\Command\Command
 {
-    const DESC = 'Replicate categories data from Magento to VSF.';
-    const NAME = 'fl32:vsf:replicate:category';
+    const DESC = 'Replicate products data from Magento to VSF.';
+    const NAME = 'fl32:vsf:replicate:product';
     const OPT_INDEX = 'index';
     const OPT_INDEX_SHORT = 'i';
     const OPT_STORE = 'store';
@@ -22,13 +22,13 @@ class Category
     private $appState;
     /** @var \Magento\Framework\ObjectManagerInterface */
     private $manObj;
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category */
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Product */
     private $srvReplicate;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\State $appState,
-        \Flancer32\VsfAdapter\Service\Replicate\Category $srvReplicate
+        \Flancer32\VsfAdapter\Service\Replicate\Product $srvReplicate
     ) {
         /* these objects are used in parent::__construct/configure */
         $this->manObj = $manObj;
@@ -84,7 +84,7 @@ class Category
             self::OPT_INDEX,
             self::OPT_INDEX_SHORT,
             \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'Prefix to construct names for ElasticSearch index (`vsf_msk_` => `vsf_msk_category`).'
+            'Prefix to construct names for ElasticSearch index (`vsf_msk_` => `vsf_msk_product`).'
         );
         $this->addOption(
             self::OPT_STORE,

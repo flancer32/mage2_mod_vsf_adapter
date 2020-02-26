@@ -4,21 +4,21 @@
  * Since: 2019
  */
 
-namespace Flancer32\VsfAdapter\Service\Replicate\Category;
+namespace Flancer32\VsfAdapter\Service\Replicate;
 
 
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Category as ECategory;
-use Flancer32\VsfAdapter\Service\Replicate\Category\Full\Request as ARequest;
-use Flancer32\VsfAdapter\Service\Replicate\Category\Full\Response as AResponse;
+use Flancer32\VsfAdapter\Service\Replicate\Category\Request as ARequest;
+use Flancer32\VsfAdapter\Service\Replicate\Category\Response as AResponse;
 
 /**
  * Completely delete all categories data from ElasticSearch and index new ones.
  */
-class Full
+class Category
 {
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter */
     private $adapterEs;
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category\Full\A\Indexer */
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category\A\Indexer */
     private $anIndexer;
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Category */
     private $daoCat;
@@ -38,7 +38,7 @@ class Full
         \Magento\Catalog\Helper\Category $hlpCatalogCategory,
         \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter $adapterEs,
         \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Category $daoCat,
-        \Flancer32\VsfAdapter\Service\Replicate\Category\Full\A\Indexer $anIndexer
+        \Flancer32\VsfAdapter\Service\Replicate\Category\A\Indexer $anIndexer
     ) {
         $this->logger = $logger;
         $this->mgrStore = $mgrStore;
@@ -58,7 +58,6 @@ class Full
     private function convertMageToEs($mageCats)
     {
         $result = [];
-        $ndxByLevel = [];
         foreach ($mageCats as $one) {
             // prepare intermediate data
             $id = $one->getId();
@@ -86,18 +85,21 @@ class Full
         return $result;
     }
 
+    /**
+     * Clean up all data from product index in Elasticsearch before replication.
+     */
     private function deleteEsData()
     {
         $where = '';
         $resp = $this->daoCat->deleteSet($where);
         $deleted = $resp['deleted'];
-        $this->logger->info("Full replication service deletes all category data in ElasticSearch ($deleted items).");
+        $this->logger->info("Replication service deletes all category data in ElasticSearch ($deleted items).");
     }
 
     /**
      * Perform replication for all catalog categories.
-     * @param \Flancer32\VsfAdapter\Service\Replicate\Category\Full\Request|null $request
-     * @return \Flancer32\VsfAdapter\Service\Replicate\Category\Full\Response
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Category\Request|null $request
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Category\Response
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute(ARequest $request = null)
@@ -153,9 +155,9 @@ class Full
         foreach ($esCats as $one) {
             $resp = $this->daoCat->create($one);
             $id = $resp['_id'];
-            $result = $resp['result'];
+            $action = $resp['result'];  // saved|updated
             $name = $one->name;
-            $this->logger->debug("Category #$id is $result ($name).");
+            $this->logger->debug("Category #$id is $action ($name).");
         }
     }
 }

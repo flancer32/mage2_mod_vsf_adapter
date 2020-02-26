@@ -9,10 +9,10 @@ namespace Flancer32\VsfAdapter\Repo\ElasticSearch\Dao;
 
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Category as DataEntity;
 
-class Category
+class Product
     extends \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter\Dao
 {
     const ENTITY_CLASS = DataEntity::class;
-    const ENTITY_NAME = 'category';
+    const ENTITY_NAME = 'product';
     const ENTITY_PK = 'id';
 }

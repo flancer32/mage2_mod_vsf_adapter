@@ -4,10 +4,13 @@
  * Since: 2019
  */
 
-namespace Flancer32\VsfAdapter\Service\Replicate\Category\Full\A;
+namespace Flancer32\VsfAdapter\Service\Replicate\Category\A;
 
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Category as ECat;
 
+/**
+ * Populate `children_data` attribute with hierarchical data.
+ */
 class Indexer
 {
     /**

@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Flancer32\VsfAdapter\Service\Replicate\Category\Full;
+namespace Flancer32\VsfAdapter\Service\Replicate\Category;
 
 
 class Response

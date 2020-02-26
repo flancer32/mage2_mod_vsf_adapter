@@ -6,8 +6,8 @@
 
 namespace Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate;
 
-use Flancer32\VsfAdapter\Service\Replicate\Category\Full\Request as ARequest;
-use Flancer32\VsfAdapter\Service\Replicate\Category\Full\Response as AResponse;
+use Flancer32\VsfAdapter\Service\Replicate\Category\Request as ARequest;
+use Flancer32\VsfAdapter\Service\Replicate\Category\Response as AResponse;
 
 class Report
     extends \Magento\Backend\Block\Template
@@ -17,13 +17,13 @@ class Report
 
     /** @var \Flancer32\VsfAdapter\App\Logger */
     private $logger;
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category\Full */
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category */
     private $srvReplicateCat;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Flancer32\VsfAdapter\App\Logger $logger,
-        \Flancer32\VsfAdapter\Service\Replicate\Category\Full $srvReplicateCat,
+        \Flancer32\VsfAdapter\Service\Replicate\Category $srvReplicateCat,
         array $data = []
     ) {
         parent::__construct($context, $data);

@@ -23,6 +23,24 @@ class Adapter
     }
 
     /**
+     * https://stackoverflow.com/questions/50609417/elasticsearch-error-cluster-block-exception-forbidden-12-index-read-only-all/50609418#50609418
+     *
+     * @return array|callable
+     * @throws \Elasticsearch\Common\Exceptions\NoNodesAvailableException
+     */
+    public function allowDelete()
+    {
+        $client = $this->getClient();
+        $transport = $client->transport;
+        $method = 'PUT';
+        $uri = '/_all/_settings';
+        $params = null;
+        $body = '{"index.blocks.read_only_allow_delete": null}';
+        $promise = $transport->performRequest($method, $uri, $params, $body);
+        return $transport->resultOrFuture($promise);
+    }
+
+    /**
      * @return \Elasticsearch\Client
      */
     public function getClient(): \Elasticsearch\Client
@@ -65,5 +83,4 @@ class Adapter
     {
         $this->indexPrefix = $data;
     }
-
 }

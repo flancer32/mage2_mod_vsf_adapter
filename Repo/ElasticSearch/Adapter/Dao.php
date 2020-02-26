@@ -36,6 +36,11 @@ abstract class Dao
         return $client->index($params);
     }
 
+    public function deleteOne($pk)
+    {
+        // TODO: Implement deleteOne() method.
+    }
+
     public function deleteSet($where)
     {
         $index = $this->getIndexName();
@@ -44,13 +49,29 @@ abstract class Dao
             'index' => $index,
             'body' => ['query' => $query]
         ];
+        $this->adapter->allowDelete($index);
         $client = $this->getEsClient();
         return $client->deleteByQuery($params);
+    }
+
+    public function getAttributes(): array
+    {
+        // TODO: Implement getAttributes() method.
+    }
+
+    public function getEntityClass()
+    {
+        // TODO: Implement getEntityClass() method.
     }
 
     private function getEntityName()
     {
         return static::ENTITY_NAME;
+    }
+
+    public function getEntityPath()
+    {
+        // TODO: Implement getEntityPath() method.
     }
 
     /**
@@ -66,8 +87,28 @@ abstract class Dao
         return $this->adapter->getIndexPrefix() . $this->getEntityName();
     }
 
+    public function getOne($key)
+    {
+        // TODO: Implement getOne() method.
+    }
+
     public function getPrimaryKey()
     {
         return static::ENTITY_PK;
+    }
+
+    public function getSet($where = null, $bind = null, $order = null, $limit = null, $offset = null)
+    {
+        // TODO: Implement getSet() method.
+    }
+
+    public function updateOne($data)
+    {
+        // TODO: Implement updateOne() method.
+    }
+
+    public function updateSet($data, $where)
+    {
+        // TODO: Implement updateSet() method.
     }
 }
