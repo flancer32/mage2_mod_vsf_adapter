@@ -154,6 +154,8 @@ class Product
         /* get Magento data, convert it to ES form then index data  */
         $mageProds = $this->getMageProducts($storeId);
         $esProds = $this->convertMageToEs($mageProds);
+        $total = count($esProds);
+        $this->logger->info("Total '$total' products is found to be replicated.");
 
         /* remove all indexes from ES then create new ones */
         $this->deleteEsData();
@@ -195,6 +197,7 @@ class Product
      */
     private function saveEsData($esProds)
     {
+        $created = $updated = 0;  // yes, all products should be saved, not updated
         foreach ($esProds as $one) {
             $resp = $this->daoProd->create($one);
             $id = $resp['_id'];
@@ -202,6 +205,8 @@ class Product
             $name = $one->name;
             $sku = $one->sku;
             $this->logger->debug("Product #$id is $action ($sku: $name).");
+            ($action == 'created') ? $created++ : $updated++;
         }
+        $this->logger->info("'$created' items were created and '$updated' items were updated.");
     }
 }

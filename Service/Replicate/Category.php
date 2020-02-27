@@ -152,12 +152,15 @@ class Category
      */
     private function saveEsData($esCats)
     {
+        $created = $updated = 0;  // yes, all products should be saved, not updated
         foreach ($esCats as $one) {
             $resp = $this->daoCat->create($one);
             $id = $resp['_id'];
             $action = $resp['result'];  // saved|updated
             $name = $one->name;
             $this->logger->debug("Category #$id is $action ($name).");
+            ($action == 'created') ? $created++ : $updated++;
         }
+        $this->logger->info("'$created' items were created and '$updated' items were updated.");
     }
 }

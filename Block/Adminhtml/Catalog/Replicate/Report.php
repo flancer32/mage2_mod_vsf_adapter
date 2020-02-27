@@ -6,12 +6,15 @@
 
 namespace Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate;
 
-use Flancer32\VsfAdapter\Service\Replicate\Category\Request as ARequest;
-use Flancer32\VsfAdapter\Service\Replicate\Category\Response as AResponse;
+use Flancer32\VsfAdapter\Service\Replicate\Category\Request as ARequestCat;
+use Flancer32\VsfAdapter\Service\Replicate\Category\Response as AResponseCat;
+use Flancer32\VsfAdapter\Service\Replicate\Product\Request as ARequestProd;
+use Flancer32\VsfAdapter\Service\Replicate\Product\Response as AResponseProd;
 
 class Report
     extends \Magento\Backend\Block\Template
 {
+    /** @see view/adminhtml/ui_component/fl32vsf_catalog_replicate_form.xml */
     const FIELDSET = 'catalog_replicate_form';
     const FIELD_STORE_VIEW = 'store_view';
 
@@ -19,16 +22,20 @@ class Report
     private $logger;
     /** @var \Flancer32\VsfAdapter\Service\Replicate\Category */
     private $srvReplicateCat;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Product */
+    private $srvReplicateProd;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Flancer32\VsfAdapter\App\Logger $logger,
         \Flancer32\VsfAdapter\Service\Replicate\Category $srvReplicateCat,
+        \Flancer32\VsfAdapter\Service\Replicate\Product $srvReplicateProd,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->logger = $logger;
         $this->srvReplicateCat = $srvReplicateCat;
+        $this->srvReplicateProd = $srvReplicateProd;
     }
 
     protected function _beforeToHtml()
@@ -43,10 +50,14 @@ class Report
 
         /* perform service call */
         try {
-            $req = new ARequest();
+            $req = new ARequestCat();
             $req->storeId = $storeId;
-            /** @var AResponse $resp */
+            /** @var AResponseCat $resp */
             $resp = $this->srvReplicateCat->execute($req);
+            $req = new ARequestProd();
+            $req->storeId = $storeId;
+            /** @var AResponseProd $resp */
+            $resp = $this->srvReplicateProd->execute($req);
         } catch (\Throwable $e) {
             $this->logger->err($e->getMessage());
         }
