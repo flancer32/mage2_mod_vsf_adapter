@@ -41,6 +41,7 @@ class Product
     public $status;
     public $stock;
     public $type_id;
+    public $updated_at;
     public $url_path;
     public $visibility;
 }

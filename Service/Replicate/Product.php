@@ -78,6 +78,7 @@ class Product
             $specialPrice = $one->getData(MageProduct::CODE_SPECIAL_PRICE);
             $status = $one->getStatus();
             $typeId = $one->getTypeId();
+            $updatedAt = $one->getUpdatedAt();
             $urlKey = $slug;
             $urlPath = $one->getUrlPath() . "/$urlKey";
             $visibility = $one->getVisibility();
@@ -104,6 +105,7 @@ class Product
             $esItem->status = $status;
             $esItem->stock = [];
             $esItem->type_id = $typeId;
+            $esItem->updated_at = $updatedAt;
             $esItem->url_path = $urlPath;
             $esItem->visibility = $visibility;
 
