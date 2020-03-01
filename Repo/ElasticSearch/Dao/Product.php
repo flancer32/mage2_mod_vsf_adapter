@@ -6,13 +6,20 @@
 
 namespace Flancer32\VsfAdapter\Repo\ElasticSearch\Dao;
 
+use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product as DataEntity;
 
-use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Category as DataEntity;
-
+/**
+ * Data access object to operate with data in Elasticsearch.
+ */
 class Product
     extends \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter\Dao
 {
     const ENTITY_CLASS = DataEntity::class;
     const ENTITY_NAME = 'product';
     const ENTITY_PK = 'id';
+
+    public function getEntityClass()
+    {
+        return DataEntity::class;
+    }
 }

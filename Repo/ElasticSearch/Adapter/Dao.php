@@ -49,7 +49,7 @@ abstract class Dao
             'index' => $index,
             'body' => ['query' => $query]
         ];
-        $this->adapter->allowDelete($index);
+        $res = $this->adapter->allowDelete($index);
         $client = $this->getEsClient();
         return $client->deleteByQuery($params);
     }
@@ -59,10 +59,7 @@ abstract class Dao
         // TODO: Implement getAttributes() method.
     }
 
-    public function getEntityClass()
-    {
-        // TODO: Implement getEntityClass() method.
-    }
+    public abstract function getEntityClass();
 
     private function getEntityName()
     {

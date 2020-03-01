@@ -6,7 +6,10 @@
 
 namespace Flancer32\VsfAdapter\Service\Replicate;
 
+use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Attr as EAttr;
+use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Attr\Option as EAttrOption;
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product as EProduct;
+use Flancer32\VsfAdapter\Service\Replicate\Product\A\Data\Attr as DAttr;
 use Flancer32\VsfAdapter\Service\Replicate\Product\Request as ARequest;
 use Flancer32\VsfAdapter\Service\Replicate\Product\Response as AResponse;
 use Magento\Catalog\Api\Data\ProductAttributeInterface as MageProduct;
@@ -18,10 +21,14 @@ class Product
 {
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter */
     private $adapterEs;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader */
+    private $anAttrLoader;
     /** @var \Magento\Framework\Api\Search\SearchCriteriaInterfaceFactory */
     private $buildCriteria;
     /** @var \Magento\Framework\Api\FilterBuilder */
     private $buildFilter;
+    /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Attr */
+    private $daoAttr;
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Product */
     private $daoProd;
     /** @var \Psr\Log\LoggerInterface */
@@ -38,7 +45,9 @@ class Product
         \Magento\Store\Model\StoreManagerInterface $mgrStore,
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
         \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter $adapterEs,
-        \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Product $daoProd
+        \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Attr $daoAttr,
+        \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Product $daoProd,
+        \Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader $anAttrLoader
     ) {
         $this->logger = $logger;
         $this->buildCriteria = $buildCriteria;
@@ -46,18 +55,24 @@ class Product
         $this->mgrStore = $mgrStore;
         $this->repoProd = $repoProd;
         $this->adapterEs = $adapterEs;
+        $this->daoAttr = $daoAttr;
         $this->daoProd = $daoProd;
+        $this->anAttrLoader = $anAttrLoader;
     }
 
     /**
      * Convert product data from Magento format to ElasticSearch format.
      *
      * @param \Magento\Catalog\Model\Product[] $mageProds
+     * @param DAttr[] $attrsExist
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[]
      */
-    private function convertMageToEs($mageProds)
+    private function convertMageToEs($mageProds, $attrsExist)
     {
-        $result = [];
+        $esProds = [];
+        $esAttrs = [];
+        $attrRegistry = [];
+        $mapAttrByCode = $this->mapAttrsByCode($attrsExist);
         foreach ($mageProds as $one) {
             // prepare intermediate data
             $id = $one->getId();
@@ -109,17 +124,69 @@ class Product
             $esItem->url_path = $urlPath;
             $esItem->visibility = $visibility;
 
-            $result[] = $esItem;
+            // add values for user defined attributes to registry
+            foreach ($one->getData() as $attrCode => $optionId) {
+                if (isset($mapAttrByCode[$attrCode])) {
+                    $attrId = $mapAttrByCode[$attrCode];
+                    if (!isset($attrRegistry[$attrId])) {
+                        $attrRegistry[$attrId] = [];
+                    }
+                    $attr = $attrsExist[$attrId];
+                    $options = $attr->options;
+                    if (
+                        is_array($options) &&
+                        !is_array($optionId) &&
+                        isset($options[$optionId])
+                    ) {
+                        $option = $options[$optionId];
+                        $attrRegistry[$attrId][$optionId] = $option->value;
+                    }
+
+                    // add user defined attribute to ES product
+                    $esItem->$attrCode = $one->getData($attrCode);
+                }
+            }
+
+            $esProds[] = $esItem;
         }
-        return $result;
+        foreach ($attrRegistry as $attrId => $options) {
+            $attr = $attrsExist[$attrId];
+            $esAttr = new  EAttr();
+            $esAttr->attribute_code = $attr->code;
+            $esAttr->attribute_id = (int)$attr->id;
+            $esAttr->frontend_input = (string)$attr->inputType;
+            $esAttr->frontend_label = (string)$attr->label;
+            $esAttr->is_comparable = (bool)$attr->isComparable;
+            $esAttr->is_user_defined = (bool)$attr->isUserDefined;
+            $esAttr->is_visible = true;
+            $esAttr->is_visible_on_front = (bool)$attr->isVisibleOnFront;
+            if (is_array($options) && count($options)) {
+                asort($options);
+                $esAttr->options = [];
+                foreach ($options as $optionId => $optionValue) {
+                    $esOption = new EAttrOption();
+                    $esOption->value = (int)$optionId;
+                    $esOption->label = (string)$optionValue;
+                    $esAttr->options[] = $esOption;
+                }
+            } else {
+                unset($esAttr->options);
+            }
+            $esAttrs[] = $esAttr;
+
+        }
+        return [$esProds, $esAttrs];
     }
 
     /**
-     * Clean up all data from product index in Elasticsearch before replication.
+     * Clean up all data from attribute & product indexes in Elasticsearch before replication.
      */
     private function deleteEsData()
     {
         $where = '';
+        $resp = $this->daoAttr->deleteSet($where);
+        $deleted = $resp['deleted'];
+        $this->logger->info("Replication service deletes all products data in ElasticSearch ($deleted items).");
         $resp = $this->daoProd->deleteSet($where);
         $deleted = $resp['deleted'];
         $this->logger->info("Replication service deletes all products data in ElasticSearch ($deleted items).");
@@ -151,15 +218,18 @@ class Product
         $indexPrefix = $this->adapterEs->getIndexPrefix();
         $this->logger->info("Full replication for products is started (index: '$indexPrefix...'; store: $storeId).");
 
+        /* get user defined attributes  */
+        $attrsExist = $this->anAttrLoader->exec($storeId);
         /* get Magento data, convert it to ES form then index data  */
         $mageProds = $this->getMageProducts($storeId);
-        $esProds = $this->convertMageToEs($mageProds);
-        $total = count($esProds);
-        $this->logger->info("Total '$total' products is found to be replicated.");
+        [$esProds, $esAttrs] = $this->convertMageToEs($mageProds, $attrsExist);
+        $totalProds = count($esProds);
+        $totalAttrs = count($esAttrs);
+        $this->logger->info("Total '$totalProds' products & '$totalAttrs' attributes are found to be replicated.");
 
         /* remove all indexes from ES then create new ones */
         $this->deleteEsData();
-        $this->saveEsData($esProds);
+        $this->saveEsData($esProds, $esAttrs);
         $this->logger->info("Full replication for categories is completed.");
 
         /* restore current store */
@@ -193,9 +263,25 @@ class Product
     }
 
     /**
-     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $esProds
+     * Create map [attrCode => attrId].
+     *
+     * @param DAttr[] $attrs
+     * @return array
      */
-    private function saveEsData($esProds)
+    private function mapAttrsByCode($attrs)
+    {
+        $result = [];
+        foreach ($attrs as $attr) {
+            $result[$attr->code] = $attr->id;
+        }
+        return $result;
+    }
+
+    /**
+     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $esProds
+     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Attr[] $esAttrs
+     */
+    private function saveEsData($esProds, $esAttrs)
     {
         $created = $updated = 0;  // yes, all products should be saved, not updated
         foreach ($esProds as $one) {
@@ -207,6 +293,15 @@ class Product
             $this->logger->debug("Product #$id is $action ($sku: $name).");
             ($action == 'created') ? $created++ : $updated++;
         }
-        $this->logger->info("'$created' items were created and '$updated' items were updated.");
+        $this->logger->info("'$created' product items were created and '$updated' items were updated.");
+        $created = $updated = 0;  // yes, all products should be saved, not updated
+        foreach ($esAttrs as $attr) {
+            $resp = $this->daoAttr->create($attr);
+            $id = $resp['_id'];
+            $action = $resp['result'];  // saved|updated
+            $this->logger->debug("Attribute '$id' is $action.");
+            ($action == 'created') ? $created++ : $updated++;
+        }
+        $this->logger->info("'$created' attribute items were created and '$updated' items were updated.");
     }
 }
