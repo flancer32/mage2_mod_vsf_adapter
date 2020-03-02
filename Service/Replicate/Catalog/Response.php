@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Flancer32\VsfAdapter\Service\Replicate\Attr;
+namespace Flancer32\VsfAdapter\Service\Replicate\Catalog;
 
 
 class Response

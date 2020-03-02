@@ -33,14 +33,6 @@ interface IDao
     public function create($data);
 
     /**
-     * Delete one entity using primary key (or entity itself - PK will be extracted).
-     *
-     * @param DataEntity|array|int|string $pk
-     * @return int
-     */
-    public function deleteOne($pk);
-
-    /**
      * Delete set of entities using $where condition.
      *
      * @param $where
@@ -49,31 +41,10 @@ interface IDao
     public function deleteSet($where);
 
     /**
-     * Get permanent attributes names.
-     *
-     * @return string[]
-     */
-    public function getAttributes(): array;
-
-    /**
      * Class name for PHP data object corresponded to this repo.
      * @return string
      */
     public function getEntityClass();
-
-    /**
-     * Path to entity in DEM ("/path/to/entity").
-     * @return string
-     */
-    public function getEntityPath();
-
-    /**
-     * Get one entity using primary key or unique key.
-     *
-     * @param $key
-     * @return DataEntity|null
-     */
-    public function getOne($key);
 
     /**
      * Name of the primary key attribute. ElasticSearch operates with simple string ID.
@@ -81,40 +52,4 @@ interface IDao
      * @return string
      */
     public function getPrimaryKey();
-
-    /**
-     * Get entities according to given conditions.
-     *
-     * @param string|array $where
-     * @param array $bind
-     * @param string|array $order
-     * @param string $limit
-     * @param string $offset
-     * @return DataEntity[]
-     */
-    public function getSet(
-        $where = null,
-        $bind = null,
-        $order = null,
-        $limit = null,
-        $offset = null
-    );
-
-    /**
-     * Update one entity (primary key will be extracted from $data).
-     *
-     * @param DataEntity $data
-     * @return int
-     */
-    public function updateOne($data);
-
-    /**
-     * Update entities according to given conditions.
-     * Only whose $data attributes that are set directly will be processed.
-     *
-     * @param DataEntity|array $data
-     * @param mixed $where
-     * @return int
-     */
-    public function updateSet($data, $where);
 }

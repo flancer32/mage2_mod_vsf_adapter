@@ -8,12 +8,8 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="fl32:vsf:replicate:attr"
-                      xsi:type="object">Flancer32\VsfAdapter\Cli\Replicate\Attr</item>
-                <item name="fl32:vsf:replicate:category"
-                      xsi:type="object">Flancer32\VsfAdapter\Cli\Replicate\Category</item>
-                <item name="fl32:vsf:replicate:product"
-                      xsi:type="object">Flancer32\VsfAdapter\Cli\Replicate\Product</item>
+                <item name="fl32:vsf:replicate:catalog"
+                      xsi:type="object">Flancer32\VsfAdapter\Cli\Replicate\Catalog</item>
             </argument>
         </arguments>
     </type>

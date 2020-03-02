@@ -1,22 +1,20 @@
 <?php
 /**
- * Load user defined attributes and its values for given store.
- *
  * Authors: Alex Gusev <alex@flancer64.com>
- * Since: 2020
+ * Since: 2019
  */
 
-namespace Flancer32\VsfAdapter\Service\Replicate\Product\A;
+namespace Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A;
 
-use Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader\A\Query\GetAttrs as QGetAttr;
-use Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader\A\Query\GetOptions as QGetOpt;
-use Flancer32\VsfAdapter\Service\Replicate\Product\A\Data\Attr as DAttr;
-use Flancer32\VsfAdapter\Service\Replicate\Product\A\Data\Attr\Option as DOption;
+use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetAttrs as QGetAttr;
+use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetOptions as QGetOpt;
+use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr as DAttr;
+use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr\Option as DOption;
 
 /**
- * Load user defined attributes and its values for given store.
+ * Get all attributes data from Magento and convert it to intermediary format to process later.
  */
-class AttrLoader
+class Attribute
 {
     /**
      * This list is extracted from API request, probably configured in "vue-storefront/config/default.json"
@@ -47,32 +45,44 @@ class AttrLoader
         "url_key",
         "url_path"
     ];
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader\A\Query\GetAttrs */
+
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetAttrs */
     private $qGetAttrs;
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader\A\Query\GetOptions */
-    private $qGetOptions;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetOptions */
+    private $qGetOpts;
 
     public function __construct(
-        \Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader\A\Query\GetAttrs $qGetAttrs,
-        \Flancer32\VsfAdapter\Service\Replicate\Product\A\AttrLoader\A\Query\GetOptions $qGetOptions
+        \Flancer32\VsfAdapter\App\Logger $logger,
+        \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetAttrs $qGetAttrs,
+        \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetOptions $qGetOpts
     ) {
+        $this->logger = $logger;
         $this->qGetAttrs = $qGetAttrs;
-        $this->qGetOptions = $qGetOptions;
+        $this->qGetOpts = $qGetOpts;
     }
 
-
+    /**
+     * Get all attributes data from Magento and convert it to intermediary format to process later.
+     *
+     * @param int $storeId
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[]
+     */
     public function exec($storeId)
     {
         $result = $this->loadAttributes($storeId);
         $result = $this->populateWithOptions($result, $storeId);
+        $total = count($result);
+        $this->logger->info("Total '$total' product attributes items were loaded from Magento.");
         return $result;
     }
 
     /**
-     * Load visible, user defined attributes with labels related to given store view.
+     * Load attributes ((visible, user defined), required) with labels related to given store view.
      *
      * @param int $storeId
-     * @return \Flancer32\VsfAdapter\Service\Replicate\Product\A\Data\Attr[]
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[]
      */
     private function loadAttributes($storeId)
     {
@@ -110,13 +120,13 @@ class AttrLoader
     }
 
     /**
-     * @param DAttr[] $attrs
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[] $attrs
      * @param int $storeId
      * @return mixed
      */
     private function populateWithOptions($attrs, $storeId)
     {
-        $query = $this->qGetOptions->build();
+        $query = $this->qGetOpts->build();
         $conn = $query->getConnection();
         $bind = [
             QGetOpt::BND_STORE_ID => $storeId

@@ -7,7 +7,7 @@
                 <scheme>http</scheme>
                 <host>127.0.0.1</host>
                 <port>9200</port>
-                <index_prefix>vsf_</index_prefix>
+                <index_prefix>vsf</index_prefix>
             </es>
         </vsf_config>
     </default>

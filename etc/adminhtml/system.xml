@@ -33,7 +33,7 @@
                 <field id="index_prefix" translate="label comment" type="text"
                        sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Index Prefix</label>
-                    <comment>Prefix for Elasticsearch indexes (vsf_ => vsf_category, vsf_product, ...).</comment>
+                    <comment>Prefix for Elasticsearch indexes (vsf => vsf_category, vsf_product, ...).</comment>
                 </field>
             </group>
         </section>
