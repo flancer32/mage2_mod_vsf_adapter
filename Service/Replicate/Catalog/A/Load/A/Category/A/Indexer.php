@@ -31,17 +31,14 @@ class Indexer
                     $id = $cat->id;
                     $childrenCount = 0;
                     if (isset($mapByTeam[$id])) {
-                        $children = '';
                         $childrenData = [];
                         $childrenCount++;
                         foreach ($mapByTeam[$id] as $teamCatId) {
                             /** @var ECat $teamCat */
                             $teamCat = $mapById[$teamCatId];
                             $childrenCount += $teamCat->children_count;
-                            $children .= "$teamCatId,";
                             $childrenData[] = $teamCat;
                         }
-                        $cat->children = substr($children, 0, -1); // cut the last ','
                         $cat->children_data = $childrenData;
                     }
                     $cat->children_count = $childrenCount;

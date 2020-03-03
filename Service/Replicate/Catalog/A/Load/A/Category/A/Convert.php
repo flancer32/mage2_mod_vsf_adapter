@@ -30,6 +30,8 @@ class Convert
         $result->id = (int)$mage->getId();
         $result->is_active = (bool)$mage->getIsActive();
         $result->level = (int)$mage->getLevel();
+        $result->meta_description = $mage->getData('meta_description');
+        $result->meta_title = $mage->getData('meta_title');
         $result->name = $mage->getName();
         $result->parent_id = (int)$mage->getParentId();
         $result->path = $mage->getPath();
