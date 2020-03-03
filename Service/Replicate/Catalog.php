@@ -87,6 +87,9 @@ class Catalog
         $this->mgrStore->setCurrentStore($storeIdCurrent);
         $this->logger->info("Catalog replication is completed.");
         $result->success = true;
+        $result->countAttrs = count($esAttrs);
+        $result->countCats = count($esCats);
+        $result->countProds = count($esProds);
         return $result;
     }
 

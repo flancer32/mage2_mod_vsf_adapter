@@ -6,10 +6,7 @@
 
 namespace Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate;
 
-use Flancer32\VsfAdapter\Service\Replicate\Category\Request as ARequestCat;
-use Flancer32\VsfAdapter\Service\Replicate\Category\Response as AResponseCat;
-use Flancer32\VsfAdapter\Service\Replicate\Product\Request as ARequestProd;
-use Flancer32\VsfAdapter\Service\Replicate\Product\Response as AResponseProd;
+use Flancer32\VsfAdapter\Service\Replicate\Catalog\Request as ARequest;
 
 class Report
     extends \Magento\Backend\Block\Template
@@ -20,22 +17,18 @@ class Report
 
     /** @var \Flancer32\VsfAdapter\App\Logger */
     private $logger;
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Category */
-    private $srvReplicateCat;
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Product */
-    private $srvReplicateProd;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Catalog */
+    private $srvReplicate;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Flancer32\VsfAdapter\App\Logger $logger,
-        \Flancer32\VsfAdapter\Service\Replicate\Category $srvReplicateCat,
-        \Flancer32\VsfAdapter\Service\Replicate\Product $srvReplicateProd,
+        \Flancer32\VsfAdapter\Service\Replicate\Catalog $srvReplicate,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->logger = $logger;
-        $this->srvReplicateCat = $srvReplicateCat;
-        $this->srvReplicateProd = $srvReplicateProd;
+        $this->srvReplicate = $srvReplicate;
     }
 
     protected function _beforeToHtml()
@@ -45,19 +38,14 @@ class Report
         $params = $req->getParam(self::FIELDSET);
         $storeId = $params[self::FIELD_STORE_VIEW];
 
-        /* Set up logging level for in-momory handler */
+        /* Set up logging level for in-memory handler */
         $this->logger->getHandlerMemory()->setLevel(\Monolog\Logger::INFO);
 
         /* perform service call */
         try {
-            $req = new ARequestCat();
+            $req = new ARequest();
             $req->storeId = $storeId;
-            /** @var AResponseCat $resp */
-            $resp = $this->srvReplicateCat->execute($req);
-            $req = new ARequestProd();
-            $req->storeId = $storeId;
-            /** @var AResponseProd $resp */
-            $resp = $this->srvReplicateProd->execute($req);
+            $this->srvReplicate->execute($req);
         } catch (\Throwable $e) {
             $this->logger->err($e->getMessage());
         }

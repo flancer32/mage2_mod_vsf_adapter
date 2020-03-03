@@ -9,6 +9,12 @@ namespace Flancer32\VsfAdapter\Service\Replicate\Catalog;
 
 class Response
 {
+    /** @var int */
+    public $countAttrs;
+    /** @var int */
+    public $countCats;
+    /** @var int */
+    public $countProds;
     /** @var bool */
     public $success;
 }

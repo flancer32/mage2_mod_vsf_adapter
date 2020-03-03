@@ -7,6 +7,7 @@
 namespace Flancer32\VsfAdapter\Cli\Replicate;
 
 use Flancer32\VsfAdapter\Service\Replicate\Catalog\Request as ARequest;
+use Flancer32\VsfAdapter\Service\Replicate\Catalog\Response as AResponse;
 
 class Catalog
     extends \Symfony\Component\Console\Command\Command
@@ -73,7 +74,9 @@ class Catalog
         $req = new ARequest();
         $req->indexPrefix = $prefix;
         $req->storeId = $storeId;
-        $this->srvReplicate->execute($req);
+        /** @var AResponse $resp */
+        $resp = $this->srvReplicate->execute($req);
+        $output->writeln("'{$resp->countAttrs}' attributes, '{$resp->countCats}' categories and '{$resp->countProds}' products were replicated.");
         $output->writeln("Command '$name' is executed.");
     }
 
