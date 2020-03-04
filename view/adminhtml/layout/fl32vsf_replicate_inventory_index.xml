@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <uiComponent name="fl32vsf_catalog_replicate_form"/>
+            <uiComponent name="fl32vsf_replicate_inventory_form"/>
         </referenceContainer>
     </body>
 </page>

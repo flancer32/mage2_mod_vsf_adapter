@@ -4,7 +4,7 @@
  * Since: 2020
  */
 
-namespace Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate\Button;
+namespace Flancer32\VsfAdapter\Block\Adminhtml\Button;
 
 class Start
     implements \Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface

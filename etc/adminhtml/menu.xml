@@ -3,19 +3,27 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Flancer32_VsfAdapter::catalog"
-                title="Vue Storefront"
-                translate="title"
-                module="Flancer32_VsfAdapter"
-                sortOrder="100"
-                parent="Magento_Catalog::catalog"
-                resource="Flancer32_VsfAdapter::replicate"/>
-        <add id="Flancer32_VsfAdapter::catalog_replicate"
-                title="Replicate Catalog"
-                translate="title"
-                module="Flancer32_VsfAdapter"
-                sortOrder="100"
-                parent="Flancer32_VsfAdapter::catalog"
-                action="fl32vsf/catalog_replicate/index"
-                resource="Flancer32_VsfAdapter::replicate"/>
+             title="Vue Storefront"
+             translate="title"
+             module="Flancer32_VsfAdapter"
+             sortOrder="100"
+             parent="Magento_Catalog::catalog"
+             resource="Flancer32_VsfAdapter::replicate"/>
+        <add id="Flancer32_VsfAdapter::replicate_catalog"
+             title="Catalog Replication"
+             translate="title"
+             module="Flancer32_VsfAdapter"
+             sortOrder="100"
+             parent="Flancer32_VsfAdapter::catalog"
+             action="fl32vsf/replicate_catalog/index"
+             resource="Flancer32_VsfAdapter::replicate"/>
+        <add id="Flancer32_VsfAdapter::replicate_inventory"
+             title="Inventory Replication"
+             translate="title"
+             module="Flancer32_VsfAdapter"
+             sortOrder="200"
+             parent="Flancer32_VsfAdapter::catalog"
+             action="fl32vsf/replicate_inventory/index"
+             resource="Flancer32_VsfAdapter::replicate"/>
     </menu>
 </config>

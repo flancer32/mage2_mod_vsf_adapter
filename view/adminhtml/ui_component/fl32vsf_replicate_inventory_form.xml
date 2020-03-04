@@ -7,17 +7,17 @@
     <!-- **************************************************** -->
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">fl32vsf_catalog_replicate_form.fl32vsf_catalog_replicate_form_ds
+            <item name="provider" xsi:type="string">fl32vsf_replicate_inventory_form.fl32vsf_replicate_inventory_form_ds
             </item>
         </item>
     </argument>
 
     <settings>
         <buttons>
-            <button name="save" class="Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate\Button\Start"/>
+            <button name="save" class="Flancer32\VsfAdapter\Block\Adminhtml\Button\Start"/>
         </buttons>
         <deps>
-            <dep>fl32vsf_catalog_replicate_form.fl32vsf_catalog_replicate_form_ds</dep>
+            <dep>fl32vsf_replicate_inventory_form.fl32vsf_replicate_inventory_form_ds</dep>
         </deps>
         <!-- to prevent never ending spinner & to post form data to server -->
         <layout>
@@ -25,18 +25,18 @@
         </layout>
     </settings>
 
-    <dataSource name="fl32vsf_catalog_replicate_form_ds"
+    <dataSource name="fl32vsf_replicate_inventory_form_ds"
                 component="Magento_Ui/js/form/provider">
         <settings>
-            <submitUrl path="fl32vsf/catalog_replicate/post"/>
+            <submitUrl path="fl32vsf/replicate_inventory/post"/>
         </settings>
-        <dataProvider class="Flancer32\VsfAdapter\Ui\DataProvider\Catalog\Replicate\Form"
-                      name="fl32vsf_catalog_replicate_form_ds">
+        <dataProvider class="Flancer32\VsfAdapter\Ui\DataProvider\Replicate\Form"
+                      name="fl32vsf_replicate_inventory_form_ds">
         </dataProvider>
     </dataSource>
 
-    <!-- See \Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate\Report::FIELDSET -->
-    <fieldset name="catalog_replicate_form">
+    <!-- See \Flancer32\VsfAdapter\Block\Adminhtml\Replicate\Inventory\Report::FIELDSET -->
+    <fieldset name="replicate_form">
         <!-- Don't remove "settings/label" section, fieldset will be empty on the front -->
         <settings>
             <label></label>
@@ -59,7 +59,7 @@
                 <item name="config" xsi:type="array">
                     <item name="inputName" xsi:type="string">notes</item>
                     <item name="value" xsi:type="string">
-                        <![CDATA[Select view to replicate catalog data to related Elasticsearch index (see "Stores / Configuration / VUE STOREFRONT / Config / Elasticsearch").]]>
+                        <![CDATA[Select view to replicate inventory data to related Elasticsearch index (see "Stores / Configuration / VUE STOREFRONT / Config / Elasticsearch").]]>
                     </item>
                 </item>
             </argument>

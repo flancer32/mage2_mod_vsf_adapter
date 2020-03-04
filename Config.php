@@ -28,6 +28,7 @@ class Config
     const ENTITY_EAV_ATTRIBUTE_LABEL = 'eav_attribute_label';
     const ENTITY_EAV_ATTRIBUTE_OPTION = 'eav_attribute_option';
     const ENTITY_EAV_ATTRIBUTE_OPTION_VALUE = 'eav_attribute_option_value';
+
     const E_EAV_ATTR_LABEL_A_ATTR_ID = 'attribute_id';
     const E_EAV_ATTR_LABEL_A_STORE_ID = 'store_id';
     const E_EAV_ATTR_LABEL_A_VALUE = 'value';
@@ -36,10 +37,13 @@ class Config
     const E_EAV_ATTR_OPT_VAL_A_OPTION_ID = 'option_id';
     const E_EAV_ATTR_OPT_VAL_A_STORE_ID = 'store_id';
     const E_EAV_ATTR_OPT_VAL_A_VALUE = 'value';
+
     /**
-     * Adminhtml menu items.
+     * Adminhtml menu items (./etc/adminhtml/menu.xml).
      */
-    const MENU_CATALOG_REPLICATE = self::MODULE . '::catalog_replicate';
+    const MENU_REPLICATE_CATALOG = self::MODULE . '::replicate_catalog';
+    const MENU_REPLICATE_INVENTORY = self::MODULE . '::replicate_inventory';
+
     /** This module name. */
     const MODULE = 'Flancer32_VsfAdapter';
 

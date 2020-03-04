@@ -10,6 +10,8 @@
             <argument name="commands" xsi:type="array">
                 <item name="fl32:vsf:replicate:catalog"
                       xsi:type="object">Flancer32\VsfAdapter\Cli\Replicate\Catalog</item>
+                <item name="fl32:vsf:replicate:inventory"
+                      xsi:type="object">Flancer32\VsfAdapter\Cli\Replicate\Inventory</item>
             </argument>
         </arguments>
     </type>

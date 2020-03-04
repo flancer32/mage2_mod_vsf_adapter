@@ -4,7 +4,7 @@
  * Since: 2020
  */
 
-namespace Flancer32\VsfAdapter\Ui\DataProvider\Catalog\Replicate;
+namespace Flancer32\VsfAdapter\Ui\DataProvider\Replicate;
 
 /**
  * Wrapper for UI data provider.
@@ -29,6 +29,6 @@ class Form
 
     public function getData()
     {
-        return [null => ['field' => 'value']];
+        return [];
     }
 }

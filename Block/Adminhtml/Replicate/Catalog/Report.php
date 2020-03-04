@@ -4,15 +4,15 @@
  * Since: 2020
  */
 
-namespace Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate;
+namespace Flancer32\VsfAdapter\Block\Adminhtml\Replicate\Catalog;
 
 use Flancer32\VsfAdapter\Service\Replicate\Catalog\Request as ARequest;
 
 class Report
     extends \Magento\Backend\Block\Template
 {
-    /** @see view/adminhtml/ui_component/fl32vsf_catalog_replicate_form.xml */
-    const FIELDSET = 'catalog_replicate_form';
+    /** @see view/adminhtml/ui_component/fl32vsf_replicate_catalog_form.xml */
+    const FIELDSET = 'replicate_form';
     const FIELD_STORE_VIEW = 'store_view';
 
     /** @var \Flancer32\VsfAdapter\App\Logger */
@@ -62,7 +62,6 @@ class Report
         $hndl = $this->logger->getHandlerMemory();
         $stream = $hndl->getStream();
         rewind($stream);
-        $result = stream_get_contents($stream);
-        return $result;
+        return stream_get_contents($stream);
     }
 }

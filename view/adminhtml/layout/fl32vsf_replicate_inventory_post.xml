@@ -3,8 +3,8 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Flancer32\VsfAdapter\Block\Adminhtml\Catalog\Replicate\Report"
-                   template="Flancer32_VsfAdapter::catalog/replicate/report.phtml"/>
+            <block class="Flancer32\VsfAdapter\Block\Adminhtml\Replicate\Inventory\Report"
+                   template="Flancer32_VsfAdapter::replicate/report.phtml"/>
         </referenceContainer>
     </body>
 </page>
