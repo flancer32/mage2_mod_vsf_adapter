@@ -19,6 +19,7 @@ class Product
     /** @var int */
     public $id;
     public $image;
+    public $is_in_stock;
     public $meta_description;
     public $meta_title;
     public $name;
@@ -32,6 +33,7 @@ class Product
      */
     public $original_price_incl_tax;
     public $parentSku;
+    public $price;
     public $price_incl_tax;
     public $product_links;
     public $qty;
