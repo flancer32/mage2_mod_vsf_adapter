@@ -47,9 +47,42 @@ interface IDao
     public function getEntityClass();
 
     /**
+     * Create empty, full-structured entity to perform reverse engineering to get types of props (reflection).
+     *
+     * @return DataEntity
+     */
+    public function getEntityEmpty();
+
+    /**
+     * Get one entity using primary key or unique key.
+     *
+     * @param $key
+     * @return DataEntity|null
+     */
+    public function getOne($key);
+
+    /**
      * Name of the primary key attribute. ElasticSearch operates with simple string ID.
      *
      * @return string
      */
     public function getPrimaryKey();
+
+    /**
+     * Get entities according to given conditions.
+     *
+     * @param string|array $where
+     * @param array $bind
+     * @param string|array $order
+     * @param string $limit
+     * @param string $offset
+     * @return DataEntity[]
+     */
+    public function getSet(
+        $where = null,
+        $bind = null,
+        $order = null,
+        $limit = null,
+        $offset = null
+    );
 }
