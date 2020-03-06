@@ -107,7 +107,11 @@ class Save
             $action = $resp['result'];  // saved|updated
             $code = $one->name;
             $this->logger->debug("Category #$id is $action ($code).");
-            ($action == 'created') ? $created++ : $other++;
+            if ($action == 'created') {
+                $created++;
+            } else {
+                $other++;
+            }
         }
         $this->logger->info("'$created' category items were created ('$other' requests have other result).");
     }

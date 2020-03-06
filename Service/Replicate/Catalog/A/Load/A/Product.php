@@ -7,7 +7,7 @@
 namespace Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A;
 
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Attr\Option as EAttrOption;
-use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr as DAttr;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr as DAttr;
 
 /**
  * Get products data from Magento, analyze its attributes then convert products & attributes data to
@@ -15,8 +15,8 @@ use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr as DAttr;
  */
 class Product
 {
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Product\A\Convert */
-    private $aConvert;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert */
+    private $convert;
     /** @var \Magento\Framework\Api\Search\SearchCriteriaInterfaceFactory */
     private $buildCriteria;
     /** @var \Magento\Framework\Api\FilterBuilder */
@@ -31,21 +31,20 @@ class Product
         \Magento\Framework\Api\SearchCriteriaBuilder $buildCriteria,
         \Magento\Framework\Api\FilterBuilder $buildFilter,
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
-        \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Product\A\Convert $aConvert
-
+        \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert $convert
     ) {
         $this->logger = $logger;
         $this->buildCriteria = $buildCriteria;
         $this->buildFilter = $buildFilter;
         $this->repoProd = $repoProd;
-        $this->aConvert = $aConvert;
+        $this->convert = $convert;
     }
 
     /**
      * Convert products & attributes data from Magento/intermediary format to ElasticSearch format.
      *
      * @param \Magento\Catalog\Model\Product[] $mageProds
-     * @param \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[] $attrsData
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[] $attrsData
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[]
      */
     private function convertMageToEs($mageProds, $attrsData)
@@ -55,7 +54,7 @@ class Product
         $mapAttrByCode = $this->mapAttrsByCode($attrsData);
         foreach ($mageProds as $one) {
             // create ES data item for product with base attributes
-            $esItem = $this->aConvert->mapProductDataToEs($one);
+            $esItem = $this->convert->productDataToEs($one);
 
             // register values for user defined attributes for current product
             foreach ($one->getData() as $attrCode => $optionId) {
@@ -90,7 +89,7 @@ class Product
     }
 
     /**
-     * @param \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[] $attrsData
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[] $attrsData
      * @param array $attrRegistry options values for attributes being used in replicated products
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[]
      */
@@ -99,7 +98,7 @@ class Product
         $result = [];
         foreach ($attrRegistry as $attrId => $options) {
             $attr = $attrsData[$attrId];
-            $esAttr = $this->aConvert->mapAttrDataToEs($attr);
+            $esAttr = $this->convert->attributeDataToEs($attr);
 
             if (is_array($options) && count($options)) {
                 asort($options);
@@ -120,7 +119,7 @@ class Product
 
     /**
      * @param int $storeId
-     * @param \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[] $attrData
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[] $attrData
      * @return array
      */
     public function exec($storeId, $attrData)

@@ -76,7 +76,7 @@ class Inventory
         $req->storeId = $storeId;
         /** @var AResponse $resp */
         $resp = $this->srvReplicate->execute($req);
-//        $output->writeln("'{$resp->countAttrs}' attributes, '{$resp->countCats}' categories and '{$resp->countProds}' products were replicated.");
+        $output->writeln("'{$resp->total}' products ('{$resp->disabled}' disabled), '{$resp->updated}' were updated and '{$resp->noops}' were unchanged.");
         $output->writeln("Command '$name' is executed.");
     }
 

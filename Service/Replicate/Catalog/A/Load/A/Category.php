@@ -11,24 +11,24 @@ namespace Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A;
  */
 class Category
 {
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Category\A\Convert */
-    private $aConvert;
     /** @var \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Category\A\Indexer */
     private $aIndexer;
     /** @var \Magento\Catalog\Helper\Category */
     private $hlpCatalogCategory;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert */
+    private $zConvert;
 
     public function __construct(
         \Flancer32\VsfAdapter\App\Logger $logger,
         \Magento\Catalog\Helper\Category $hlpCatalogCategory,
-        \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Category\A\Convert $aConvert,
+        \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert $zConvert,
         \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Category\A\Indexer $aIndexer
     ) {
         $this->logger = $logger;
         $this->hlpCatalogCategory = $hlpCatalogCategory;
-        $this->aConvert = $aConvert;
+        $this->zConvert = $zConvert;
         $this->aIndexer = $aIndexer;
     }
 
@@ -42,7 +42,7 @@ class Category
     {
         $result = [];
         foreach ($mageItems as $mageItem) {
-            $esItem = $this->aConvert->mapMageDataToEs($mageItem);
+            $esItem = $this->zConvert->categoryDataToEs($mageItem);
             $result[] = $esItem;
         }
         return $result;

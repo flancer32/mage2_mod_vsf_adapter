@@ -12,6 +12,8 @@ namespace Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter;
 abstract class Dao
     implements IDao
 {
+    /** @var int max count of records in the response of the search query (https://stackoverflow.com/a/48298624/4073821) */
+    private const MAX_SIZE = 10000;
     private const TYPE = '_doc';
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter */
     private $adapter;
@@ -109,9 +111,7 @@ abstract class Dao
             'index' => $index,
             'type' => self::TYPE
         ];
-        if ($limit) {
-            $params['size'] = (int)$limit;
-        }
+        $params['size'] = ($limit > 0) && ($limit < self::MAX_SIZE) ? (int)$limit : self::MAX_SIZE;
         if ($offset) {
             $params['from'] = (int)$offset;
         }
@@ -155,5 +155,20 @@ abstract class Dao
             $result->$key = $value;
         }
         return $result;
+    }
+
+    public function updateOne($data)
+    {
+        $index = $this->getIndexName();
+        $pkey = $this->getPrimaryKey();
+        $id = $data->$pkey;
+        $params = [
+            'index' => $index,
+            'id' => $id,
+            'type' => self::TYPE,
+            'body' => ['doc' => $data]
+        ];
+        $client = $this->getEsClient();
+        return $client->update($params);
     }
 }

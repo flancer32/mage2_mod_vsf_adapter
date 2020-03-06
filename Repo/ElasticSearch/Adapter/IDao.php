@@ -85,4 +85,12 @@ interface IDao
         $limit = null,
         $offset = null
     );
+
+    /**
+     * Update one entity (primary key will be extracted from $data).
+     *
+     * @param DataEntity $data
+     * @return int
+     */
+    public function updateOne($data);
 }

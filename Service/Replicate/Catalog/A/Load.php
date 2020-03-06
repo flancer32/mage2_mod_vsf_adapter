@@ -8,7 +8,7 @@ namespace Flancer32\VsfAdapter\Service\Replicate\Catalog\A;
 
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Category as EEsCat;
 use Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product as EEsProd;
-use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr as DAttr;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr as DAttr;
 
 /**
  * Retrieve Magento data and prepare ES compatible data structures.

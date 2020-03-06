@@ -14,8 +14,14 @@ use Flancer32\VsfAdapter\Service\Replicate\Inventory\Response as AResponse;
  */
 class Inventory
 {
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Inventory\A\Load\Mage */
+    private $aLoadMage;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Inventory\A\Update */
+    private $aUpdate;
     /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter */
     private $adapterEs;
+    /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Product */
+    private $daoProd;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Magento\Store\Model\StoreManagerInterface */
@@ -24,11 +30,17 @@ class Inventory
     public function __construct(
         \Flancer32\VsfAdapter\App\Logger $logger,
         \Magento\Store\Model\StoreManagerInterface $mgrStore,
-        \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter $adapterEs
+        \Flancer32\VsfAdapter\Repo\ElasticSearch\Adapter $adapterEs,
+        \Flancer32\VsfAdapter\Repo\ElasticSearch\Dao\Product $daoProd,
+        \Flancer32\VsfAdapter\Service\Replicate\Inventory\A\Load\Mage $aLoadMage,
+        \Flancer32\VsfAdapter\Service\Replicate\Inventory\A\Update $aUpdate
     ) {
         $this->logger = $logger;
         $this->mgrStore = $mgrStore;
         $this->adapterEs = $adapterEs;
+        $this->daoProd = $daoProd;
+        $this->aLoadMage = $aLoadMage;
+        $this->aUpdate = $aUpdate;
     }
 
     /**
@@ -72,11 +84,22 @@ class Inventory
         $this->logger->info("Inventory replication parameters: index '$indexPrefix', store $storeId.");
 
         /* perform data replication itself */
-
+        // get all products from ES
+        $esProds = $this->daoProd->getSet();
+        $total = count($esProds);
+        $this->logger->info("'$total' products are found in Elasticsearch.");
+        // get all products from Magento
+        $mageProds = $this->aLoadMage->exec($storeId);
+        // update inventory data and disable extra products
+        [$disabled, $updated, $noops] = $this->aUpdate->exec($esProds, $mageProds);
         /* restore current store */
         $this->mgrStore->setCurrentStore($storeIdCurrent);
         $this->logger->info("Inventory replication is completed.");
+        $result->disabled = $disabled;
+        $result->noops = $noops;
         $result->success = true;
+        $result->total = $total;
+        $result->updated = $updated;
         return $result;
     }
 

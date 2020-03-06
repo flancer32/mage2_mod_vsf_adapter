@@ -8,8 +8,8 @@ namespace Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A;
 
 use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetAttrs as QGetAttr;
 use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Attribute\A\Query\GetOptions as QGetOpt;
-use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr as DAttr;
-use Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr\Option as DOption;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr as DAttr;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr\Option as DOption;
 
 /**
  * Get all attributes data from Magento and convert it to intermediary format to process later.
@@ -67,7 +67,7 @@ class Attribute
      * Get all attributes data from Magento and convert it to intermediary format to process later.
      *
      * @param int $storeId
-     * @return \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[]
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[]
      */
     public function exec($storeId)
     {
@@ -82,7 +82,7 @@ class Attribute
      * Load attributes ((visible, user defined), required) with labels related to given store view.
      *
      * @param int $storeId
-     * @return \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[]
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[]
      */
     private function loadAttributes($storeId)
     {
@@ -120,7 +120,7 @@ class Attribute
     }
 
     /**
-     * @param \Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data\Attr[] $attrs
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[] $attrs
      * @param int $storeId
      * @return mixed
      */

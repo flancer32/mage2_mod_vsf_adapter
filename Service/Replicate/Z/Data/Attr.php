@@ -6,7 +6,7 @@
  * Since: 2020
  */
 
-namespace Flancer32\VsfAdapter\Service\Replicate\Catalog\A\Load\A\Data;
+namespace Flancer32\VsfAdapter\Service\Replicate\Z\Data;
 
 use Flancer32\VsfAdapter\Service\Replicate\Product\A\Data\Attr\Option as DAttrOption;
 

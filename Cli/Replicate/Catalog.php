@@ -76,7 +76,7 @@ class Catalog
         $req->storeId = $storeId;
         /** @var AResponse $resp */
         $resp = $this->srvReplicate->execute($req);
-        $output->writeln("'{$resp->countAttrs}' attributes, '{$resp->countCats}' categories and '{$resp->countProds}' products were replicated.");
+        $output->writeln("'{$resp->attributes}' attributes, '{$resp->categories}' categories and '{$resp->products}' products were replicated.");
         $output->writeln("Command '$name' is executed.");
     }
 
