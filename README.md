@@ -18,7 +18,7 @@ $ ./bin/magento fl32:vsf:replicate:catalog -i vsf_store3 -s 3
 $ ./bin/magento fl32:vsf:replicate:inventory -i vsf_store3 -s 3
 ```
 
-Replication log see in `./var/log/vsf.log`.
+You can see replication log in `./var/log/vsf.log`.
 
 Use `crontab` to setup periodical replication.
 
@@ -48,7 +48,7 @@ Expected output in admin:
 2020-03-10/16:36:09-VSF.INFO - '3731' product items were created ('0' requests have other result).
 2020-03-10/16:36:09-VSF.INFO - Catalog replication is completed.
 ```
-Full log for replication see in `./var/log/vsf.log`.
+You can see full log for the replication in `./var/log/vsf.log`.
 
 
 ### Inventory replication
@@ -66,7 +66,7 @@ Expected output in admin:
 2020-03-10/16:39:08-VSF.INFO - '0' product items were updated and '3731' were unchanged ('0' requests have other result).
 2020-03-10/16:39:08-VSF.INFO - Inventory replication is completed.
 ```
-Full log for replication see in `./var/log/vsf.log`.
+You can see full log for the replication in `./var/log/vsf.log`.
 
 
 
@@ -74,4 +74,4 @@ Full log for replication see in `./var/log/vsf.log`.
 Go to `Admin / STORES / VUE STOREFRONT / Config` to setup Elasticsearch connection parameters and index prefix:
 ![alt text](docs/img/admin_config.png "Configuration")
 
-Switch scope to configure different VSF apps for different views.
+Switch the scope to configure different VSF apps for different views.
