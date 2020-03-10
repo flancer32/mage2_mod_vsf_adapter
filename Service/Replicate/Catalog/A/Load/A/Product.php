@@ -15,14 +15,16 @@ use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr as DAttr;
  */
 class Product
 {
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert */
-    private $convert;
     /** @var \Magento\Framework\Api\Search\SearchCriteriaInterfaceFactory */
     private $buildCriteria;
     /** @var \Magento\Framework\Api\FilterBuilder */
     private $buildFilter;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert */
+    private $convert;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\QtyLoad */
+    private $qtyLoad;
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
     private $repoProd;
 
@@ -31,13 +33,15 @@ class Product
         \Magento\Framework\Api\SearchCriteriaBuilder $buildCriteria,
         \Magento\Framework\Api\FilterBuilder $buildFilter,
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
-        \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert $convert
+        \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert $convert,
+        \Flancer32\VsfAdapter\Service\Replicate\Z\QtyLoad $qtyLoad
     ) {
         $this->logger = $logger;
         $this->buildCriteria = $buildCriteria;
         $this->buildFilter = $buildFilter;
         $this->repoProd = $repoProd;
         $this->convert = $convert;
+        $this->qtyLoad = $qtyLoad;
     }
 
     /**
@@ -45,14 +49,20 @@ class Product
      *
      * @param \Magento\Catalog\Model\Product[] $mageProds
      * @param \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr[] $attrsData
+     * @param array $inventory [SKU => QTY]
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[]
      */
-    private function convertMageToEs($mageProds, $attrsData)
+    private function convertMageToEs($mageProds, $attrsData, $inventory)
     {
         $esProds = [];
         $attrsOptions = []; // [$attrId][$optionId] = $value
         $mapAttrByCode = $this->mapAttrsByCode($attrsData);
         foreach ($mageProds as $one) {
+            // replace qty value from inventory data
+            $sku = $one->getSku();
+            if (isset($inventory[$sku])) {
+                $one->setQty($inventory[$sku]);
+            }
             // create ES data item for product with base attributes
             $esItem = $this->convert->productDataToEs($one);
 
@@ -127,7 +137,8 @@ class Product
         $mageProds = $this->getMageProducts($storeId);
         $total = count($mageProds);
         $this->logger->info("Total '$total' product items were loaded from Magento.");
-        [$esProds, $esAttrs] = $this->convertMageToEs($mageProds, $attrData);
+        $inventory = $this->qtyLoad->exec($storeId);
+        [$esProds, $esAttrs] = $this->convertMageToEs($mageProds, $attrData, $inventory);
         $totalProds = count($esProds);
         $totalAttrs = count($esAttrs);
         $this->logger->info("Total '$totalProds' products & '$totalAttrs' attributes were converted to Elasticsearch compatible format.");

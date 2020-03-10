@@ -83,6 +83,9 @@ class Convert
         $price = $mage->getData(MageProduct::CODE_PRICE);
         $productLinks = $mage->getProductLinks();
         $qty = $mage->getQty();
+        if ($qty <= 0) {
+            $isInStock = false;
+        }
         $mage->getStockData();
         $sku = $mage->getSku();
         $slug = "--$id";

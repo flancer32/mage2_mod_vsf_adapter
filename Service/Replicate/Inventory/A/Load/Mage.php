@@ -17,6 +17,8 @@ class Mage
     private $convert;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\QtyLoad */
+    private $qtyLoad;
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
     private $repoProd;
 
@@ -25,25 +27,33 @@ class Mage
         \Magento\Framework\Api\SearchCriteriaBuilder $buildCriteria,
         \Magento\Framework\Api\FilterBuilder $buildFilter,
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
-        \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert $convert
+        \Flancer32\VsfAdapter\Service\Replicate\Z\Helper\Convert $convert,
+        \Flancer32\VsfAdapter\Service\Replicate\Z\QtyLoad $qtyLoad
     ) {
         $this->logger = $logger;
         $this->buildCriteria = $buildCriteria;
         $this->buildFilter = $buildFilter;
         $this->repoProd = $repoProd;
         $this->convert = $convert;
+        $this->qtyLoad = $qtyLoad;
     }
 
     /**
      * Convert products data from Magento format to ElasticSearch format.
      *
      * @param \Magento\Catalog\Model\Product[] $mageProds
+     * @param array $inventory [SKU => QTY]
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[]
      */
-    private function convertMageToEs($mageProds)
+    private function convertMageToEs($mageProds, $inventory)
     {
         $result = [];
         foreach ($mageProds as $one) {
+            // replace qty value from inventory data
+            $sku = $one->getSku();
+            if (isset($inventory[$sku])) {
+                $one->setQty($inventory[$sku]);
+            }
             // create ES data item for product with base attributes
             $esItem = $this->convert->productDataToEs($one);
             $id = $esItem->id;
@@ -57,7 +67,8 @@ class Mage
         $mageProds = $this->getMageProducts($storeId);
         $total = count($mageProds);
         $this->logger->info("Total '$total' product items were loaded from Magento.");
-        $result = $this->convertMageToEs($mageProds);
+        $inventory = $this->qtyLoad->exec($storeId);
+        $result = $this->convertMageToEs($mageProds, $inventory);
         $totalProds = count($result);
         $this->logger->info("Total '$totalProds' products were converted to Elasticsearch compatible format.");
         return $result;

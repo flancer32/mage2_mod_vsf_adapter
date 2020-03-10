@@ -28,6 +28,10 @@ class Config
     const ENTITY_EAV_ATTRIBUTE_LABEL = 'eav_attribute_label';
     const ENTITY_EAV_ATTRIBUTE_OPTION = 'eav_attribute_option';
     const ENTITY_EAV_ATTRIBUTE_OPTION_VALUE = 'eav_attribute_option_value';
+    const ENTITY_INVENTORY_SOURCE_ITEM = 'inventory_source_item';
+    const ENTITY_INVENTORY_STOCK_SALES_CHANNEL = 'inventory_stock_sales_channel';
+    const ENTITY_STORE = 'store';
+    const ENTITY_STORE_WEBSITE = 'store_website';
 
     const E_EAV_ATTR_LABEL_A_ATTR_ID = 'attribute_id';
     const E_EAV_ATTR_LABEL_A_STORE_ID = 'store_id';
@@ -37,7 +41,14 @@ class Config
     const E_EAV_ATTR_OPT_VAL_A_OPTION_ID = 'option_id';
     const E_EAV_ATTR_OPT_VAL_A_STORE_ID = 'store_id';
     const E_EAV_ATTR_OPT_VAL_A_VALUE = 'value';
-
+    const E_INV_SOURCE_ITEM_A_QUANTITY = 'quantity';
+    const E_INV_SOURCE_ITEM_A_SKU = 'sku';
+    const E_INV_SOURCE_ITEM_A_SOURCE_CODE = 'source_code';
+    const E_INV_STOCK_SALES_CHANNEL_A_CODE = 'code';
+    const E_STORE_A_STORE_ID = 'store_id';
+    const E_STORE_A_WEBSITE_ID = 'website_id';
+    const E_STORE_WEBSITE_A_CODE = 'code';
+    const E_STORE_WEBSITE_A_WEBSITE_ID = 'website_id';
     /**
      * Adminhtml menu items (./etc/adminhtml/menu.xml).
      */
