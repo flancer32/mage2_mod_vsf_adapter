@@ -1,6 +1,6 @@
 <?php
 /**
- * Structure for attribute data used in the code subtree (...\Service\Replicate\Catalog\A\Load\...).
+ * Structure for attribute data used in the code subtree (...\Service\Replicate\...).
  *
  * Authors: Alex Gusev <alex@flancer64.com>
  * Since: 2020
@@ -8,10 +8,10 @@
 
 namespace Flancer32\VsfAdapter\Service\Replicate\Z\Data;
 
-use Flancer32\VsfAdapter\Service\Replicate\Product\A\Data\Attr\Option as DAttrOption;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Attr\Option as DAttrOption;
 
 /**
- * Structure for attribute data used in the code subtree (...\Service\Replicate\Catalog\A\Load\...).
+ * Structure for attribute data used in the code subtree (...\Service\Replicate\...).
  */
 class Attr
 {

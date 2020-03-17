@@ -1,6 +1,6 @@
 <?php
 /**
- * Query to get raw data for product quantities.
+ * Query to get raw data for product quantities from MSI structures.
  *
  * Authors: Alex Gusev <alex@flancer64.com>
  * Since: 2020
@@ -12,9 +12,9 @@ use Flancer32\VsfAdapter\Config as Cfg;
 use Magento\Framework\DB\Sql\Expression as AnExpression;
 
 /**
- * Query to get raw data for product quantities.
+ * Query to get raw data for product quantities from Multi Stock Inventory structures.
  */
-class GetQty
+class GetMsiData
 {
 
     /** Tables aliases for external usage ('camelCase' naming) */

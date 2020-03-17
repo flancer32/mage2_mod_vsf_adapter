@@ -41,6 +41,7 @@ class Product
     public $slug;
     public $special_price;
     public $status;
+    /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\Stock */
     public $stock;
     public $type_id;
     public $updated_at;

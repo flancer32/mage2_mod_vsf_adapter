@@ -1,45 +1,67 @@
 <?php
 /**
- * Load products quantities for given store view and map results by SKU.
+ * Load stock data for given store view and map results by product ID.
  *
  * Authors: Alex Gusev <alex@flancer64.com>
- * Since: 2019
+ * Since: 2020
  */
 
 namespace Flancer32\VsfAdapter\Service\Replicate\Z;
 
-
-use Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetQty as Query;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Data\Stock as DStock;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetMsiData as QMsi;
+use Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetStockData as QStock;
 
 /**
- * Load products quantities for given store view and map results by SKU.
+ * Load stock data for given store view and map results by product ID.
  */
 class QtyLoad
 {
-    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetQty */
-    private $qGetQty;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetMsiData */
+    private $qGetMsi;
+    /** @var \Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetStockData */
+    private $qGetStock;
 
     public function __construct(
-        \Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetQty $qGetQty
+        \Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetMsiData $qGetMsi,
+        \Flancer32\VsfAdapter\Service\Replicate\Z\Repo\Query\GetStockData $qGetStock
     ) {
-        $this->qGetQty = $qGetQty;
+        $this->qGetMsi = $qGetMsi;
+        $this->qGetStock = $qGetStock;
     }
 
     /**
-     * Load products quantities for given store view and map results by SKU.
+     * @param int $storeId
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Stock[]
+     */
+    public function exec($storeId)
+    {
+        $result = $this->getStockData();
+        $msiItems = $this->getMsiData($storeId);
+        foreach ($result as $id => $one) {
+            $sku = $one->productSku;
+            if (isset($msiItems[$sku])) {
+                $one->qty = $msiItems[$sku];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Load products quantities from MSI structures for given store view and map results by SKU.
      *
      * @param int $storeId
      * @return array [SKU => QTY]
      */
-    public function exec($storeId)
+    private function getMsiData($storeId)
     {
         $result = [];
-        $query = $this->qGetQty->build();
+        $query = $this->qGetMsi->build();
         $conn = $query->getConnection();
-        $rs = $conn->fetchAll($query, [Query::BND_STORE_ID => $storeId]);
+        $rs = $conn->fetchAll($query, [QMsi::BND_STORE_ID => $storeId]);
         foreach ($rs as $one) {
-            $sku = $one[Query::A_SKU];
-            $qty = $one[Query::A_QTY];
+            $sku = $one[QMsi::A_SKU];
+            $qty = $one[QMsi::A_QTY];
             if (!is_null($sku)) {
                 $result[$sku] = $qty;
             }
@@ -47,4 +69,26 @@ class QtyLoad
         return $result;
     }
 
+    /**
+     * Load stock data from old stock structures and map results by product id.
+     *
+     * @return \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Stock[]
+     */
+    private function getStockData()
+    {
+        $result = [];
+        $query = $this->qGetStock->build();
+        $conn = $query->getConnection();
+        $rs = $conn->fetchAll($query);
+        foreach ($rs as $one) {
+            $id = $one[QStock::A_ID];
+            $item = new DStock();
+            $item->productId = $id;
+            $item->productSku = $one[QStock::A_SKU];
+            $item->qty = $one[QStock::A_QTY];
+            $item->qtyInc = $one[QStock::A_QTY_INC];
+            $result[$id] = $item;
+        }
+        return $result;
+    }
 }

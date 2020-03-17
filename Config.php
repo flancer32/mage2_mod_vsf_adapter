@@ -23,7 +23,9 @@ class Config
     const EAV_TYPE_ID_SALE = 5;
     const EAV_TYPE_ID_SHIPMENT = 8;
 
+    const ENTITY_CATALOGINVENTORY_STOCK_ITEM = 'cataloginventory_stock_item';
     const ENTITY_CATALOG_EAV_ATTRIBUTE = 'catalog_eav_attribute';
+    const ENTITY_CATALOG_PRODUCT_ENTITY = 'catalog_product_entity';
     const ENTITY_EAV_ATTRIBUTE = 'eav_attribute';
     const ENTITY_EAV_ATTRIBUTE_LABEL = 'eav_attribute_label';
     const ENTITY_EAV_ATTRIBUTE_OPTION = 'eav_attribute_option';
@@ -33,6 +35,12 @@ class Config
     const ENTITY_STORE = 'store';
     const ENTITY_STORE_WEBSITE = 'store_website';
 
+    const E_CATALOG_PRODUCT_A_ENTITY_ID = 'entity_id';
+    const E_CATALOG_PRODUCT_A_SKU = 'sku';
+    const E_CATINV_STOCK_ITEM_A_PRODUCT_ID = 'product_id';
+    const E_CATINV_STOCK_ITEM_A_QTY = 'qty';
+    const E_CATINV_STOCK_ITEM_A_QTY_INCREMENTS = 'qty_increments';
+    const E_CATINV_STOCK_ITEM_A_STOCK_ID = 'stock_id';
     const E_EAV_ATTR_LABEL_A_ATTR_ID = 'attribute_id';
     const E_EAV_ATTR_LABEL_A_STORE_ID = 'store_id';
     const E_EAV_ATTR_LABEL_A_VALUE = 'value';
@@ -58,5 +66,6 @@ class Config
     /** This module name. */
     const MODULE = 'Flancer32_VsfAdapter';
 
+    const STOCK_ID_DEFAULT = 1;
     const STORE_ID_ADMIN = 0;
 }

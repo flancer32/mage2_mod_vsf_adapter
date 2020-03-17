@@ -49,13 +49,14 @@ class Mage
     {
         $result = [];
         foreach ($mageProds as $one) {
-            // replace qty value from inventory data
-            $sku = $one->getSku();
-            if (isset($inventory[$sku])) {
-                $one->setQty($inventory[$sku]);
+            // get inventory data if exists
+            $stock = null;
+            $prodId = $one->getId();
+            if (isset($inventory[$prodId])) {
+                $stock = $inventory[$prodId];
             }
             // create ES data item for product with base attributes
-            $esItem = $this->convert->productDataToEs($one);
+            $esItem = $this->convert->productDataToEs($one, $stock);
             $id = $esItem->id;
             $result[$id] = $esItem;
         }

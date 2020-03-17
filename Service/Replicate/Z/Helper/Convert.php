@@ -63,9 +63,10 @@ class Convert
 
     /**
      * @param \Magento\Catalog\Model\Product $mage
+     * @param \Flancer32\VsfAdapter\Service\Replicate\Z\Data\Stock $stock
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product
      */
-    public function productDataToEs($mage)
+    public function productDataToEs($mage, $stock = null)
     {
         $result = new \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product();
         // prepare intermediate data
@@ -74,7 +75,6 @@ class Convert
         $customOptions = $mage->getCustomOptions();
         $description = $mage->getData(MageProduct::CODE_SHORT_DESCRIPTION);
         $image = $mage->getData('image');
-        $isInStock = $mage->isInStock();
         $metaDescription = $mage->getData(MageProduct::CODE_SEO_FIELD_META_DESCRIPTION);
         $metaTitle = $mage->getData(MageProduct::CODE_SEO_FIELD_META_TITLE);
         $name = $mage->getData(MageProduct::CODE_NAME);
@@ -83,10 +83,16 @@ class Convert
         $price = $mage->getData(MageProduct::CODE_PRICE);
         $productLinks = $mage->getProductLinks();
         $qty = $mage->getQty();
-        if ($qty <= 0) {
-            $isInStock = false;
+        if ($stock) {
+            $esStock = new \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\Stock();
+            $esStock->qty = $stock->qty;
+            $esStock->qty_increment = $stock->qtyInc;
+            $esStock->is_in_stock = (bool)(($stock->qty) > 0);
+            $qty = $esStock->qty;
+        } else {
+            $esStock = null;
         }
-        $mage->getStockData();
+        $isInStock = (bool)($qty > 0);
         $sku = $mage->getSku();
         $slug = "--$id";
         $specialPrice = $mage->getData(MageProduct::CODE_SPECIAL_PRICE);
@@ -119,7 +125,9 @@ class Convert
         $result->slug = $slug;
         $result->special_price = $specialPrice;
         $result->status = $status;
-        $result->stock = [];
+        if ($esStock) {
+            $result->stock = $esStock;
+        }
         $result->type_id = $typeId;
         $result->updated_at = $updatedAt;
         $result->url_path = $urlPath;
