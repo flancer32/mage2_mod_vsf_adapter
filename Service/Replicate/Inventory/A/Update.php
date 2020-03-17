@@ -25,39 +25,38 @@ class Update
     }
 
     /**
-     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $esProds this array is updated by this method
-     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $mageProds
+     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $oldProds this array is updated by this method
+     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $newProds
      * @return array [$disabled, $updated, $noops]
      */
-    public function exec(&$esProds, $mageProds)
+    public function exec(&$oldProds, $newProds)
     {
-        $disabled = $this->refreshItems($esProds, $mageProds);
+        $disabled = $this->refreshItems($oldProds, $newProds);
         $this->logger->info("'$disabled' products were disabled.");
-        [$updated, $noops] = $this->saveUpdates($esProds);
+        [$updated, $noops] = $this->saveUpdates($oldProds);
         return [$disabled, $updated, $noops];
     }
 
     /**
      * Scan all ES items and update repository related fields.
      *
-     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $esProds this array is updated by this method
-     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $mageProds
+     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $oldProds this array is updated by this method
+     * @param \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[] $newProds
      * @return \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product[]
      */
-    private function refreshItems(&$esProds, $mageProds)
+    private function refreshItems(&$oldProds, $newProds)
     {
         $disabled = 0;
         // scan all ES items and get the same Mage item by ID
-        foreach ($esProds as $esProd) {
+        foreach ($oldProds as $esProd) {
             $id = $esProd->id;
-            if (isset($mageProds[$id])) {
-                $mageProd = $mageProds[$id];
-                $esProd->is_in_stock = $mageProd->is_in_stock;
+            if (isset($newProds[$id])) {
+                $mageProd = $newProds[$id];
                 $esProd->original_price_incl_tax = $mageProd->original_price_incl_tax;
                 $esProd->price = $mageProd->price;
                 $esProd->price_incl_tax = $mageProd->price_incl_tax;
-                $esProd->qty = $mageProd->qty;
                 $esProd->special_price = $mageProd->special_price;
+                $esProd->stock = $mageProd->stock;
             } else {
                 // don't remove ES product, just mark as disabled (use catalog replication to remove extra items)
                 $esProd->status = \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_DISABLED;

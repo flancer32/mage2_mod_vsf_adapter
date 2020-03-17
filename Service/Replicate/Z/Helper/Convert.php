@@ -111,7 +111,7 @@ class Convert
         $result->description = $description;
         $result->id = $id;
         $result->image = $image;
-        $result->is_in_stock = $isInStock;
+//        $result->is_in_stock = $isInStock;
         $result->meta_description = $metaDescription;
         $result->meta_title = $metaTitle;
         $result->name = $name;
@@ -120,7 +120,7 @@ class Convert
         $result->price = $price;
         $result->price_incl_tax = $price;
         $result->product_links = [];
-        $result->qty = $qty;
+//        $result->qty = $qty;
         $result->sku = $sku;
         $result->slug = $slug;
         $result->special_price = $specialPrice;
