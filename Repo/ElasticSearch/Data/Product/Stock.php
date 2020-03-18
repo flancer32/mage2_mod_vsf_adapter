@@ -24,5 +24,5 @@ class Stock
      *
      * @var int quantity increment
      */
-    public $qty_increment;
+    public $qty_increments;
 }

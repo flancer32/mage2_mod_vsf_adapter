@@ -87,7 +87,7 @@ class Convert
             $esStock = new \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\Stock();
             // all quantities are integers in VSF
             $esStock->qty = (int)$stock->qty;
-            $esStock->qty_increment = (int)$stock->qtyInc;
+            $esStock->qty_increments = (int)$stock->qtyInc;
             $esStock->is_in_stock = (bool)(($stock->qty) > 0);
             $qty = $esStock->qty;
         } else {
