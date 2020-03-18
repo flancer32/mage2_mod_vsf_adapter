@@ -85,8 +85,9 @@ class Convert
         $qty = $mage->getQty();
         if ($stock) {
             $esStock = new \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\Stock();
-            $esStock->qty = $stock->qty;
-            $esStock->qty_increment = $stock->qtyInc;
+            // all quantities are integers in VSF
+            $esStock->qty = (int)$stock->qty;
+            $esStock->qty_increment = (int)$stock->qtyInc;
             $esStock->is_in_stock = (bool)(($stock->qty) > 0);
             $qty = $esStock->qty;
         } else {

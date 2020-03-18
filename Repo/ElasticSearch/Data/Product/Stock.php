@@ -13,8 +13,16 @@ class Stock
 {
     /** @var bool */
     public $is_in_stock;
-    /** @var float quantity */
+    /**
+     * Quantities are integers in VSF.
+     *
+     * @var int quantity
+     */
     public $qty;
-    /** @var float quantity increment */
+    /**
+     * Quantities are integers in VSF.
+     *
+     * @var int quantity increment
+     */
     public $qty_increment;
 }
