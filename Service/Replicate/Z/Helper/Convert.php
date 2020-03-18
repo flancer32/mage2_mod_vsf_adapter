@@ -82,26 +82,23 @@ class Convert
         $parentSku = null; // used in configurable products
         $price = $mage->getData(MageProduct::CODE_PRICE);
         $productLinks = $mage->getProductLinks();
-        $qty = $mage->getQty();
         if ($stock) {
             $esStock = new \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\Stock();
             // all quantities are integers in VSF
             $esStock->qty = (int)$stock->qty;
             $esStock->qty_increments = (int)$stock->qtyInc;
             $esStock->is_in_stock = (bool)(($stock->qty) > 0);
-            $qty = $esStock->qty;
         } else {
             $esStock = null;
         }
-        $isInStock = (bool)($qty > 0);
         $sku = $mage->getSku();
         $slug = "--$id";
         $specialPrice = $mage->getData(MageProduct::CODE_SPECIAL_PRICE);
         $status = $mage->getStatus();
         $typeId = $mage->getTypeId();
         $updatedAt = $mage->getUpdatedAt();
-        $urlKey = $slug;
-        $urlPath = $mage->getUrlPath() . "/$urlKey";
+        $urlKey = $mage->getUrlKey();
+        $urlPath = "$urlKey.html";
         $visibility = $mage->getVisibility();
 
         // prepare target data object
@@ -112,7 +109,6 @@ class Convert
         $result->description = $description;
         $result->id = $id;
         $result->image = $image;
-//        $result->is_in_stock = $isInStock;
         $result->meta_description = $metaDescription;
         $result->meta_title = $metaTitle;
         $result->name = $name;
@@ -121,7 +117,6 @@ class Convert
         $result->price = $price;
         $result->price_incl_tax = $price;
         $result->product_links = [];
-//        $result->qty = $qty;
         $result->sku = $sku;
         $result->slug = $slug;
         $result->special_price = $specialPrice;
