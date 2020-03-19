@@ -18,7 +18,10 @@ class Product
     public $description;
     /** @var int */
     public $id;
+    /** @var string path to image ("/b/l/black300.jpg") */
     public $image;
+    /** @var \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\MediaGallery[] */
+    public $media_gallery;
     public $meta_description;
     public $meta_title;
     public $name;
