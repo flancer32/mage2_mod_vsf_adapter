@@ -16,6 +16,8 @@ class Product
     public $configurable_options;
     public $custom_options;
     public $description;
+    /** @var  */
+    public $group_prices;
     /** @var int */
     public $id;
     /** @var string path to image ("/b/l/black300.jpg") */

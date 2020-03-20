@@ -106,9 +106,10 @@ class Convert
         $metaDescription = $mage->getData(MageProduct::CODE_SEO_FIELD_META_DESCRIPTION);
         $metaTitle = $mage->getData(MageProduct::CODE_SEO_FIELD_META_TITLE);
         $name = $mage->getData(MageProduct::CODE_NAME);
-        $originalPriceInclTax = $mage->getData('original_price_incl_tax');;
+        $originalPriceInclTax = $mage->getData('original_price_incl_tax');
         $parentSku = null; // used in configurable products
         $price = $mage->getData(MageProduct::CODE_PRICE);
+        $price = ($price > 0) ? $price : $originalPriceInclTax;
         $productLinks = $mage->getProductLinks();
         if ($stock) {
             $esStock = new \Flancer32\VsfAdapter\Repo\ElasticSearch\Data\Product\Stock();
@@ -143,14 +144,18 @@ class Convert
         $result->meta_description = $metaDescription;
         $result->meta_title = $metaTitle;
         $result->name = $name;
-        $result->original_price_incl_tax = $originalPriceInclTax;
+        if ($originalPriceInclTax > 0) {
+            $result->original_price_incl_tax = number_format($originalPriceInclTax, 2, '.', '');
+        }
         $result->parentSku = $parentSku;
-        $result->price = $price;
-        $result->price_incl_tax = $price;
+        $result->price = number_format($price, 2, '.', '');
+        $result->price_incl_tax = number_format($price, 2, '.', '');
         $result->product_links = [];
         $result->sku = $sku;
         $result->slug = $slug;
-        $result->special_price = $specialPrice;
+        if ($specialPrice > 0) {
+            $result->special_price = number_format($specialPrice, 2, '.', '');
+        }
         $result->status = $status;
         if ($esStock) {
             $result->stock = $esStock;
